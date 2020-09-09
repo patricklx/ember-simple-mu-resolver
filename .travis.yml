@@ -40,11 +40,7 @@ jobs:
       script:
         - yarn lint:hbs
         - yarn lint:js
-        - yarn test
 
-    - name: "Floating Dependencies"
-      script:
-        - yarn test
 
     # we recommend new addons test the current and previous LTS
     # as well as latest stable release (bonus points to beta/canary)
