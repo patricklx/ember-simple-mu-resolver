@@ -13,7 +13,7 @@ const resolver = {
   _moduleRegistry: Resolver._moduleRegistry,
   namespace: Resolver.namespace,
   resolveOther: Resolver.resolveOther,
-  resolve(name, referrer) {
+  resolve(name) {
     const root = name.split(':')[1].split('/')[0];
     let al = null;
     const methodName = `resolve${capitalize(name.split(':')[0])}`;
@@ -24,6 +24,7 @@ const resolver = {
         result = this[methodName](parsedName, [root, al]);
         if (result) return result;
       } catch (e) {
+        // eslint-disable-next-line no-console
         console.warn(e);
       }
     }
