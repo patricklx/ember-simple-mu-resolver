@@ -67,6 +67,10 @@ const resolver = {
     return undefined;
   },
 
+  resolveModifier(parsedName) {
+    return this.resolveHelper(parsedName);
+  },
+
   resolveHelper(parsedName) {
     let prefix = this.namespace.podModulePrefix;
     let fullNameWithoutType = parsedName.fullNameWithoutType;
