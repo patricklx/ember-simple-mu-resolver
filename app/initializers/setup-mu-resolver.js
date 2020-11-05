@@ -72,17 +72,15 @@ const resolver = {
   },
 
   resolveHelper(parsedName) {
-    let prefix = this.namespace.podModulePrefix;
     let fullNameWithoutType = parsedName.fullNameWithoutType;
+    const prefix = this.namespace.modulePrefix;
 
-    let normalizedModuleName = prefix + '/' + fullNameWithoutType;
-    if (this._moduleRegistry.has(normalizedModuleName)) {
-      const module = this._moduleRegistry.get(normalizedModuleName);
+    if (this._moduleRegistry.has(fullNameWithoutType)) {
+      const module = this._moduleRegistry.get(fullNameWithoutType);
       return module.default;
     }
 
-    prefix = this.namespace.modulePrefix;
-    normalizedModuleName = prefix + '/' + fullNameWithoutType;
+    let normalizedModuleName = prefix + '/' + fullNameWithoutType;
     if (this._moduleRegistry.has(normalizedModuleName)) {
       const module = this._moduleRegistry.get(normalizedModuleName);
       return module.default;
