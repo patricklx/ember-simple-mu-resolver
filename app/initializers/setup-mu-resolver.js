@@ -153,6 +153,10 @@ const resolver = {
     if (this._moduleRegistry.has(path2)) {
       return this._moduleRegistry.get(path2).default;
     }
+    path2 = path.replace('/components/', '/templates/components/');
+    if (path2.includes('/templates/components/') && this._moduleRegistry.has(path2)) {
+      return this._moduleRegistry.get(path2).default;
+    }
     const prefix = this.namespace.modulePrefix;
     path2 = `${prefix}/ui/routes/${parsedName.fullNameWithoutType}/template`;
     if (this._moduleRegistry.has(path2)) {
