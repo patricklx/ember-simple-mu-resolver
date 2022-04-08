@@ -257,7 +257,6 @@ export default {
     let emberResolver = application.__registry__.resolver._fallback || application.__registry__.resolver;
     Object.keys(resolver).forEach((k) => {
       if (!k.includes('resolve')) return;
-      if (k.includes('resolveModule')) return;
       if (!resolver[k]) return;
       patch(emberResolver, k);
     });
