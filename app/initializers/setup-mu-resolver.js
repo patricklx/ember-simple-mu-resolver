@@ -32,11 +32,11 @@ const resolver = {
   },
 
   resolveModule(path) {
-    if (this.resolveModule(path)) {
-      return this.resolveModule(path).default;
+    if (this._moduleRegistry.has(path)) {
+      return this._moduleRegistry.get(path).default;
     }
-    if (this.resolveModule(path + '/index')) {
-      return this.resolveModule(path + '/index').default;
+    if (this._moduleRegistry.has(path + '/index')) {
+      return this._moduleRegistry.get(path + '/index').default;
     }
     return null;
   },
