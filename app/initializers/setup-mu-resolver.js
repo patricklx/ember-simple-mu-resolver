@@ -39,7 +39,7 @@ const resolver = {
       return this.resolveModule(path + '/index').default;
     }
     return null;
-  }
+  },
 
   resolveService(parsedName) {
     let classicPath;
@@ -263,4 +263,3 @@ export default {
     emberResolver.myParseName = resolver.myParseName;
   }
 }
-
