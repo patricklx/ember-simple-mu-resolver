@@ -243,8 +243,8 @@ function patch(emberRes, name) {
     if (resolved && typeof resolved !== 'string') {
       return resolved;
     }
-    if (this.resolveModule(resolved)) {
-      const module = this.resolveModule(resolved);
+    if (this._moduleRegistry.has(resolved)) {
+      const module = this._moduleRegistry.get(resolved);
       return module.default;
     }
     return resolver[name].call(emberRes, ...args);
@@ -257,6 +257,7 @@ export default {
     let emberResolver = application.__registry__.resolver._fallback || application.__registry__.resolver;
     Object.keys(resolver).forEach((k) => {
       if (!k.includes('resolve')) return;
+      if (k.includes('resolveModule')) return;
       if (!resolver[k]) return;
       patch(emberResolver, k);
     });
