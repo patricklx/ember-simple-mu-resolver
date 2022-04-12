@@ -31,28 +31,38 @@ const resolver = {
     return result;
   },
 
+  resolveModule(path) {
+    if (this._moduleRegistry.has(path)) {
+      return this._moduleRegistry.get(path).default;
+    }
+    if (this._moduleRegistry.has(path + '/index')) {
+      return this._moduleRegistry.get(path + '/index').default;
+    }
+    return null;
+  },
+
   resolveService(parsedName) {
     let classicPath;
     if (parsedName.fullNameWithoutType.includes('@')) {
       let [pkg, name] = parsedName.fullNameWithoutType.split('@');
       const muPath = `${pkg}/services/${name}/service`;
-      if (this._moduleRegistry.has(muPath)) {
-        return this._moduleRegistry.get(muPath).default;
+      if (this.resolveModule(muPath)) {
+        return this.resolveModule(muPath);
       }
       [pkg, name] = parsedName.fullNameWithoutType.split('@');
       classicPath = `${pkg}/services/${name}`;
-      if (this._moduleRegistry.has(classicPath)) {
-        return this._moduleRegistry.get(classicPath).default;
+      if (this.resolveModule(classicPath)) {
+        return this.resolveModule(classicPath);
       }
     }
     const prefix = this.namespace.modulePrefix;
     classicPath = `${prefix}/services/${parsedName.fullNameWithoutType}/service`;
-    if (this._moduleRegistry.has(classicPath)) {
-      return this._moduleRegistry.get(classicPath).default;
+    if (this.resolveModule(classicPath)) {
+      return this.resolveModule(classicPath);
     }
     classicPath = `${prefix}/services/${parsedName.fullNameWithoutType}`;
-    if (this._moduleRegistry.has(classicPath)) {
-      return this._moduleRegistry.get(classicPath).default;
+    if (this.resolveModule(classicPath)) {
+      return this.resolveModule(classicPath);
     }
     return this.resolveOther(parsedName);
   },
@@ -61,8 +71,8 @@ const resolver = {
     let path = parsedName.fullNameWithoutType;
     const prefix = this.namespace.modulePrefix;
     path = `${prefix}/data/models/${path}`;
-    if (this._moduleRegistry.has(path)) {
-      return this._moduleRegistry.get(path).default;
+    if (this.resolveModule(path)) {
+      return this.resolveModule(path);
     }
     return undefined;
   },
@@ -75,20 +85,20 @@ const resolver = {
     let fullNameWithoutType = parsedName.fullNameWithoutType;
     const prefix = this.namespace.modulePrefix;
 
-    if (this._moduleRegistry.has(fullNameWithoutType)) {
-      const module = this._moduleRegistry.get(fullNameWithoutType);
-      return module.default;
+    if (this.resolveModule(fullNameWithoutType)) {
+      const module = this.resolveModule(fullNameWithoutType);
+      return module;
     }
 
     let normalizedModuleName = prefix + '/' + fullNameWithoutType;
-    if (this._moduleRegistry.has(normalizedModuleName)) {
-      const module = this._moduleRegistry.get(normalizedModuleName);
-      return module.default;
+    if (this.resolveModule(normalizedModuleName)) {
+      const module = this.resolveModule(normalizedModuleName);
+      return module;
     }
 
-    if (this._moduleRegistry.has(fullNameWithoutType)) {
-      const module = this._moduleRegistry.get(fullNameWithoutType);
-      return module.default;
+    if (this.resolveModule(fullNameWithoutType)) {
+      const module = this.resolveModule(fullNameWithoutType);
+      return module;
     }
 
     return undefined;
@@ -98,8 +108,8 @@ const resolver = {
     let path = parsedName.fullNameWithoutType;
     const prefix = this.namespace.modulePrefix;
     path = `${prefix}/data/models/${path}/adapter`;
-    if (this._moduleRegistry.has(path)) {
-      return this._moduleRegistry.get(path).default;
+    if (this.resolveModule(path)) {
+      return this.resolveModule(path);
     }
     return this.resolveOther(parsedName);
   },
@@ -108,8 +118,8 @@ const resolver = {
     let path = parsedName.fullNameWithoutType;
     const prefix = this.namespace.modulePrefix;
     path = `${prefix}/data/models/${path}/serializer`;
-    if (this._moduleRegistry.has(path)) {
-      return this._moduleRegistry.get(path).default;
+    if (this.resolveModule(path)) {
+      return this.resolveModule(path);
     }
     return this.resolveOther(parsedName);
   },
@@ -118,8 +128,8 @@ const resolver = {
     let path = parsedName.fullNameWithoutType;
     const prefix = this.namespace.modulePrefix;
     path = `${prefix}/data/transforms/${path}`;
-    if (this._moduleRegistry.has(path)) {
-      return this._moduleRegistry.get(path).default;
+    if (this.resolveModule(path)) {
+      return this.resolveModule(path);
     }
     return this.resolveOther(parsedName);
   },
@@ -127,12 +137,12 @@ const resolver = {
   resolveController(parsedName) {
     const prefix = this.namespace.modulePrefix;
     let path = `${prefix}/ui/routes/${parsedName.fullNameWithoutType}/controller`;
-    if (this._moduleRegistry.has(path)) {
-      return this._moduleRegistry.get(path).default;
+    if (this.resolveModule(path)) {
+      return this.resolveModule(path);
     }
     path = `${prefix}/ui/routes/${parsedName.fullNameWithoutType}/index/controller`;
-    if (this._moduleRegistry.has(path)) {
-      return this._moduleRegistry.get(path).default;
+    if (this.resolveModule(path)) {
+      return this.resolveModule(path);
     }
     return this.resolveOther(parsedName);
   },
@@ -141,8 +151,8 @@ const resolver = {
     let path = parsedName.fullNameWithoutType;
     const prefix = this.namespace.modulePrefix;
     path = `${prefix}/ui/routes/${path}/route`;
-    if (this._moduleRegistry.has(path)) {
-      return this._moduleRegistry.get(path).default;
+    if (this.resolveModule(path)) {
+      return this.resolveModule(path);
     }
     return this.resolveOther(parsedName);
   },
@@ -150,27 +160,27 @@ const resolver = {
   resolveTemplate(parsedName) {
     let path = parsedName.fullNameWithoutType.replace('components/', '');
     let path2 = `${path}/template`;
-    if (this._moduleRegistry.has(path2)) {
-      return this._moduleRegistry.get(path2).default;
+    if (this.resolveModule(path2)) {
+      return this.resolveModule(path2);
     }
     path2 = path.replace('/components/', '/templates/components/');
-    if (path2.includes('/templates/components/') && this._moduleRegistry.has(path2)) {
-      return this._moduleRegistry.get(path2).default;
+    if (path2.includes('/templates/components/') && this.resolveModule(path2)) {
+      return this.resolveModule(path2);
     }
     const prefix = this.namespace.modulePrefix;
     path2 = `${prefix}/ui/routes/${parsedName.fullNameWithoutType}/template`;
-    if (this._moduleRegistry.has(path2)) {
-      return this._moduleRegistry.get(path2).default;
+    if (this.resolveModule(path2)) {
+      return this.resolveModule(path2);
     }
 
     path2 = `${prefix}/ui/${path}/template`;
-    if (this._moduleRegistry.has(path2)) {
-      return this._moduleRegistry.get(path2).default;
+    if (this.resolveModule(path2)) {
+      return this.resolveModule(path2);
     }
 
     path2 = `${prefix}/ui/components/${path}/template`;
-    if (this._moduleRegistry.has(path2)) {
-      return this._moduleRegistry.get(path2).default;
+    if (this.resolveModule(path2)) {
+      return this.resolveModule(path2);
     }
     return this.resolveOther(parsedName);
   },
@@ -181,33 +191,33 @@ const resolver = {
     function checkInstance(instance) {
       return instance instanceof GlimmerComponent || instance instanceof EmberComponent;
     }
-    if (this._moduleRegistry.has(path2) && checkInstance(this._moduleRegistry.get(path2).default.prototype)) {
-      return this._moduleRegistry.get(path2).default;
+    if (this.resolveModule(path2) && checkInstance(this.resolveModule(path2).prototype)) {
+      return this.resolveModule(path2);
     }
     path2 = `${path}/component`;
-    if (this._moduleRegistry.has(path2) && checkInstance(this._moduleRegistry.get(path2).default.prototype)) {
-      return this._moduleRegistry.get(path2).default;
+    if (this.resolveModule(path2) && checkInstance(this.resolveModule(path2).prototype)) {
+      return this.resolveModule(path2);
     }
 
     let prefix = this.namespace.modulePrefix;
     path2 = `${prefix}/ui${path}/component`;
-    if (this._moduleRegistry.has(path2) && checkInstance(this._moduleRegistry.get(path2).default.prototype)) {
-      return this._moduleRegistry.get(path2).default;
+    if (this.resolveModule(path2) && checkInstance(this.resolveModule(path2).prototype)) {
+      return this.resolveModule(path2);
     }
 
     path2 = `${prefix}/ui/${path}/component`;
-    if (this._moduleRegistry.has(path2) && checkInstance(this._moduleRegistry.get(path2).default.prototype)) {
-      return this._moduleRegistry.get(path2).default;
+    if (this.resolveModule(path2) && checkInstance(this.resolveModule(path2).prototype)) {
+      return this.resolveModule(path2);
     }
 
     path2 = `${prefix}/ui/components/${path}/component`;
-    if (this._moduleRegistry.has(path2) && checkInstance(this._moduleRegistry.get(path2).default.prototype)) {
-      return this._moduleRegistry.get(path2).default;
+    if (this.resolveModule(path2) && checkInstance(this.resolveModule(path2).prototype)) {
+      return this.resolveModule(path2);
     }
 
     path2 = `${prefix}/${path}/component`;
-    if (this._moduleRegistry.has(path2) && checkInstance(this._moduleRegistry.get(path2).default.prototype)) {
-      return this._moduleRegistry.get(path2).default;
+    if (this.resolveModule(path2) && checkInstance(this.resolveModule(path2).prototype)) {
+      return this.resolveModule(path2);
     }
 
     return this.resolveOther(parsedName);
@@ -235,7 +245,7 @@ function patch(emberRes, name) {
     }
     if (this._moduleRegistry.has(resolved)) {
       const module = this._moduleRegistry.get(resolved);
-      return module.default;
+      return module;
     }
     return resolver[name].call(emberRes, ...args);
   }
@@ -253,4 +263,3 @@ export default {
     emberResolver.myParseName = resolver.myParseName;
   }
 }
-
