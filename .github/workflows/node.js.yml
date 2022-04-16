@@ -28,7 +28,7 @@ jobs:
     - run: npm i && npm i -g ember-cli
     - run: ember test
   publish:
-    needs: test
+    needs: [test]
     if: startsWith(github.ref, 'refs/tags/v')
     steps:
       - run: |
