@@ -21,7 +21,7 @@ jobs:
       env:
         CI: true
     - name: Run test
-      run: ./node_modules/.bin/ember test
+      run: ./node_modules/.bin/ember build
   deploy:
     needs: [test]
     if: startsWith(github.ref, 'refs/tags/v')
@@ -38,13 +38,7 @@ jobs:
       - name: deploy npm
         if: startsWith(github.ref, 'refs/tags/v')
         run: |
-          version=$(cat package.json | jq -r '.version')
-          TAG=v$version
-          if git rev-parse "$TAG" >/dev/null 2>&1; then
-            echo "tag exists";
-          else
-            echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
-            npm publish || echo "already published"
-          fi
+          echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
+          npm publish || echo "already published"
         env:
           NPM_TOKEN: "${{ secrets.NPM_TOKEN }}"
