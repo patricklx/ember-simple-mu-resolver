@@ -3,8 +3,7 @@ ember-simple-mu-resolver
 
 Ember Simple Module Unification Resolver
 this does not resolve local components and helpers, instead this should
-to be used together with [ember-template-component-import](https://github.com/crashco/ember-template-component-import) and [ember-template-helper-import](https://github.com/patricklx/ember-template-helper-imports)
-and I suggest to use [ember-template-styles-import](https://github.com/patricklx/ember-template-styles-import)
+to be used together with [ember-hbs-imports](https://github.com/patricklx/ember-hbs-imports)
 
 ### Use addon service
 ```js
