@@ -68,9 +68,13 @@ const resolver = {
   },
 
   resolveModel(parsedName) {
-    let path = parsedName.fullNameWithoutType;
+    let path = '';
     const prefix = this.namespace.modulePrefix;
-    path = `${prefix}/data/models/${path}`;
+    path = `${prefix}/data/models/${parsedName.fullNameWithoutType}`;
+    if (this.resolveModule(path)) {
+      return this.resolveModule(path);
+    }
+    path = `${prefix}/data/models/${parsedName.fullNameWithoutType}/model`;
     if (this.resolveModule(path)) {
       return this.resolveModule(path);
     }
