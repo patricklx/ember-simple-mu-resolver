@@ -38,6 +38,12 @@ const resolver = {
     if (this._moduleRegistry.has(path + '/index')) {
       return this._moduleRegistry.get(path + '/index').default;
     }
+
+    const name = path.split('/').slice(-1)[0];
+    const inFile = path.split('/').slice(0, -1).join('/');
+    if (this._moduleRegistry.has(inFile)) {
+      return this._moduleRegistry.get(inFile)[name] || null;
+    }
     return null;
   },
 
@@ -109,9 +115,13 @@ const resolver = {
   },
 
   resolveAdapter(parsedName) {
-    let path = parsedName.fullNameWithoutType;
+    let fullNameWithoutType = parsedName.fullNameWithoutType;
     const prefix = this.namespace.modulePrefix;
-    path = `${prefix}/data/models/${path}/adapter`;
+    let path = `${prefix}/data/models/${fullNameWithoutType}/adapter`;
+    if (this.resolveModule(path)) {
+      return this.resolveModule(path);
+    }
+    path = `${prefix}/data/adapters/${fullNameWithoutType}`;
     if (this.resolveModule(path)) {
       return this.resolveModule(path);
     }
@@ -119,9 +129,13 @@ const resolver = {
   },
 
   resolveSerializer(parsedName) {
-    let path = parsedName.fullNameWithoutType;
+    let fullNameWithoutType = parsedName.fullNameWithoutType;
     const prefix = this.namespace.modulePrefix;
-    path = `${prefix}/data/models/${path}/serializer`;
+    let path = `${prefix}/data/models/${fullNameWithoutType}/serializer`;
+    if (this.resolveModule(path)) {
+      return this.resolveModule(path);
+    }
+    path = `${prefix}/data/serializers/${fullNameWithoutType}`;
     if (this.resolveModule(path)) {
       return this.resolveModule(path);
     }
