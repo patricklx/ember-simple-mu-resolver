@@ -2,6 +2,7 @@ import Resolver from 'ember-resolver';
 import { capitalize } from '@ember/string';
 import GlimmerComponent from '@glimmer/component';
 import EmberComponent from '@ember/component';
+import GlimmerRuntime from '@glimmer/runtime';
 
 /*
  * Ember Tiny Module Unification Resolver
@@ -203,42 +204,47 @@ const resolver = {
     return this.resolveOther(parsedName);
   },
 
-  resolveComponent(parsedName) {
+  resolveComponent(parsedName, suffix='component') {
     let path = parsedName.fullNameWithoutType;
     let path2 = path;
     function checkInstance(instance) {
+      if (GlimmerRuntime.TemplateOnlyComponent && instance instanceof GlimmerRuntime.TemplateOnlyComponent) {
+        return true;
+      }
+      instance = instance.prototype;
       return instance instanceof GlimmerComponent || instance instanceof EmberComponent;
     }
-    if (this.resolveModule(path2) && checkInstance(this.resolveModule(path2).prototype)) {
+    if (this.resolveModule(path2) && checkInstance(this.resolveModule(path2))) {
       return this.resolveModule(path2);
     }
-    path2 = `${path}/component`;
-    if (this.resolveModule(path2) && checkInstance(this.resolveModule(path2).prototype)) {
+    path2 = `${path}/${suffix}`;
+    if (this.resolveModule(path2) && checkInstance(this.resolveModule(path2))) {
       return this.resolveModule(path2);
     }
 
     let prefix = this.namespace.modulePrefix;
-    path2 = `${prefix}/ui${path}/component`;
-    if (this.resolveModule(path2) && checkInstance(this.resolveModule(path2).prototype)) {
+    path2 = `${prefix}/ui${path}/${suffix}`;
+    if (this.resolveModule(path2) && checkInstance(this.resolveModule(path2))) {
       return this.resolveModule(path2);
     }
 
-    path2 = `${prefix}/ui/${path}/component`;
-    if (this.resolveModule(path2) && checkInstance(this.resolveModule(path2).prototype)) {
+    path2 = `${prefix}/ui/${path}/${suffix}`;
+    if (this.resolveModule(path2) && checkInstance(this.resolveModule(path2))) {
       return this.resolveModule(path2);
     }
 
-    path2 = `${prefix}/ui/components/${path}/component`;
-    if (this.resolveModule(path2) && checkInstance(this.resolveModule(path2).prototype)) {
+    path2 = `${prefix}/ui/components/${path}/${suffix}`;
+    if (this.resolveModule(path2) && checkInstance(this.resolveModule(path2))) {
       return this.resolveModule(path2);
     }
 
-    path2 = `${prefix}/${path}/component`;
-    if (this.resolveModule(path2) && checkInstance(this.resolveModule(path2).prototype)) {
+    path2 = `${prefix}/${path}/${suffix}`;
+    if (this.resolveModule(path2) && checkInstance(this.resolveModule(path2))) {
       return this.resolveModule(path2);
     }
 
-    return this.resolveOther(parsedName);
+    const withIndex = suffix === 'component' ? this.resolveComponent(parsedName, 'index') : undefined;
+    return withIndex || this.resolveOther(parsedName);
   },
 
   myParseName(name) {
