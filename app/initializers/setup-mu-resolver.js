@@ -33,6 +33,7 @@ const resolver = {
   },
 
   resolveModule(path) {
+    if (!path) return null;
     if (this._moduleRegistry.has(path)) {
       return this._moduleRegistry.get(path).default;
     }
@@ -42,8 +43,9 @@ const resolver = {
 
     const name = path.split('/').slice(-1)[0];
     const inFile = path.split('/').slice(0, -1).join('/');
-    if (this._moduleRegistry.has(inFile)) {
-      return this._moduleRegistry.get(inFile)[name] || null;
+    const inFileResolved = this.resolveModule(inFile);
+    if (inFileResolved) {
+      return inFileResolved[name] || null;
     }
     return null;
   },
