@@ -2,7 +2,7 @@ import Resolver from 'ember-resolver';
 import { capitalize } from '@ember/string';
 import GlimmerComponent from '@glimmer/component';
 import EmberComponent from '@ember/component';
-import GlimmerRuntime from '@glimmer/runtime';
+import { TemplateOnlyComponent } from '@glimmer/runtime';
 
 /*
  * Ember Tiny Module Unification Resolver
@@ -32,18 +32,18 @@ const resolver = {
     return result;
   },
 
-  resolveModule(path) {
+  resolveModule(path, useDefault=true) {
     if (!path) return null;
     if (this._moduleRegistry.has(path)) {
-      return this._moduleRegistry.get(path).default;
+      return useDefault ? this._moduleRegistry.get(path).default : this._moduleRegistry.get(path);
     }
     if (this._moduleRegistry.has(path + '/index')) {
-      return this._moduleRegistry.get(path + '/index').default;
+      return useDefault ? this._moduleRegistry.get(path + '/index').default : this._moduleRegistry.get(path + '/index');
     }
 
     const name = path.split('/').slice(-1)[0];
     const inFile = path.split('/').slice(0, -1).join('/');
-    const inFileResolved = this.resolveModule(inFile);
+    const inFileResolved = this.resolveModule(inFile, false);
     if (inFileResolved) {
       return inFileResolved[name] || null;
     }
@@ -210,7 +210,7 @@ const resolver = {
     let path = parsedName.fullNameWithoutType;
     let path2 = path;
     function checkInstance(instance) {
-      if (GlimmerRuntime.TemplateOnlyComponent && instance instanceof GlimmerRuntime.TemplateOnlyComponent) {
+      if (TemplateOnlyComponent && instance instanceof TemplateOnlyComponent) {
         return true;
       }
       instance = instance.prototype;
