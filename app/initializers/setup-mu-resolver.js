@@ -97,11 +97,7 @@ const resolver = {
   resolveHelper(parsedName) {
     let fullNameWithoutType = parsedName.fullNameWithoutType;
     const prefix = this.namespace.modulePrefix;
-
-    if (this.resolveModule(fullNameWithoutType)) {
-      const module = this.resolveModule(fullNameWithoutType);
-      return module;
-    }
+    const hasSlash = fullNameWithoutType.includes('/');
 
     let normalizedModuleName = prefix + '/' + fullNameWithoutType;
     if (this.resolveModule(normalizedModuleName)) {
@@ -109,7 +105,7 @@ const resolver = {
       return module;
     }
 
-    if (this.resolveModule(fullNameWithoutType)) {
+    if (hasSlash && this.resolveModule(fullNameWithoutType)) {
       const module = this.resolveModule(fullNameWithoutType);
       return module;
     }
