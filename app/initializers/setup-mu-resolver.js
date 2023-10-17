@@ -2,7 +2,9 @@ import Resolver from 'ember-resolver';
 import { capitalize } from '@ember/string';
 import GlimmerComponent from '@glimmer/component';
 import EmberComponent from '@ember/component';
-import { TemplateOnlyComponent } from '@glimmer/runtime';
+
+
+const { TemplateOnlyComponent } = require('@glimmer/runtime');
 
 /*
  * Ember Tiny Module Unification Resolver
